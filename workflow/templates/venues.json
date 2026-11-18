@@ -1,0 +1,98 @@
+{
+  "aaai": {
+    "entry": "AnonymousSubmission2027.tex",
+    "files": {
+      "AnonymousSubmission2027.tex": "95a9e0ee566c6f76276c9dcad09a83637542dac168383213252671daec3408ab",
+      "CameraReady2027.tex": "e0b55f09da66a69af9866ec07ce7a05d200880a57a8fa0a8f60db92ffb4d86a1",
+      "Figures/figure1.pdf": "29e16580aae21c9c7785b6851d244a9948c6ccf96e308ee366fa651db22c922b",
+      "Figures/figure2.pdf": "8899687a74776c5ba3179f630f14a946c36278560a997fbac0cde58cdca1750f",
+      "ReproducibilityChecklist.tex": "06a3459158089bf1c64b738986118f1d1566e816da4b710c6397561e33c3d5e6",
+      "aaai2027.bib": "ff8a860f20602b2645723856b80f0a0ad28ee7ec270158254400fdb80b429e45",
+      "aaai2027.bst": "5db7765ba99de5c1e4686f9b3940a0add9c5e702f2164514462bec130ccb6e3c",
+      "aaai2027.sty": "01990f8d3716f8e39c5b28a7478f3ac6e28630d1161de6105a7217f5e7f60e43"
+    },
+    "sha256": "9406a545d5d213757245eb37118fe652b2fccf64f555aff28b49ebe2a780c960",
+    "source": "https://aaai.org/conference/aaai/aaai-27/submission-instructions/",
+    "url": "https://aaai.org/wp-content/uploads/2026/10/AuthorKit27.zip",
+    "version": "2027"
+  },
+  "acl": {
+    "entry": "acl_latex.tex",
+    "files": {
+      "README.md": "f5e4fe5096e8bc045b586a2351409f29ce6d55e0268a434602a06011f571d882",
+      "acl.sty": "19dfeddc2c0e448f3926a0bef048a9db3f3611b46265b760caabd7ada4f361de",
+      "acl_latex.tex": "339c9ee9705c1767d44ef24b85365c0bb8619ecc3fcf66172bf1356292389614",
+      "acl_lualatex.tex": "0d9987ba833331a996f9abcd1a03eebba7d7ae331145793e7ddb6b5ae8db27b3",
+      "acl_natbib.bst": "6fbb306202290f4b68e74ac1460a8b27398500cb6dfeb4492e74c457eae7cd1e",
+      "custom.bib": "d76ccb30ddceb70c9e1ad0be3f43dfe301ad5765aab2c960fc830ef67bf8232a",
+      "formatting.md": "9e004a136c5dd43300d97e5bef5eb3a77d0e2a2d3502f0f2436ec011d1c49e9c"
+    },
+    "sha256": "35b158b724d04435a657ab214fe4da5f2b57808fc15ca0f24b751bc07b1d1c73",
+    "source": "https://github.com/acl-org/acl-style-files",
+    "url": "https://codeload.github.com/acl-org/acl-style-files/zip/d5adc823ff0f80f98c80405ca0ab66c68e684409",
+    "version": "d5adc823"
+  },
+  "cvpr": {
+    "entry": "main.tex",
+    "files": {
+      "README.md": "82154abbe11cdbc336bfb9ecc7e6cf9f2be823c4ff18de16235f2cca2561101a",
+      "cvpr.sty": "1cd7f434b13d41c475df4a1901a5d82d9ca8b80b8cf6205dc4602a5c164286b4",
+      "ieeenat_fullname.bst": "e38e6166bd7b1e6d23a1b79dcdb55c656e4fcdbe91bdf6b50d827e6b5d1aacfc",
+      "main.bib": "1d6d78b4c02eae2607a40e15376f6ac96ef491e311241acd6c8a8a970ac3c1b2",
+      "main.tex": "9f6d8ef0ffaeac9494283f563d2666b125af5951f8d9604f7f805dca87460bfe",
+      "preamble.tex": "f666a85903f49929395951e7afb620e96d4e208334623f23135298b4d7f06228",
+      "rebuttal.tex": "e64a94a7a4c41f0758c9309983f195a5b7e85b2f8d73fd436badede9ddf5b292",
+      "sec/0_abstract.tex": "ac059e9cb8595bab8f7795d088d71e321ee46e8397d5cfb56957107d43c868ed",
+      "sec/1_intro.tex": "6b7bf826be4e68e92a037d3d238a108ed7e4432204353826d237e00faeecf7a6",
+      "sec/2_formatting.tex": "bd4233b307bfe3ad791c433e021b00ed4e4017db7adde8ee8e475c267fc7191d",
+      "sec/3_finalcopy.tex": "ae261b3daaff50cf609bb3ca7dfd030bb1e835fd85aa4fda45cdaf53cc35cc1a",
+      "sec/X_suppl.tex": "594291f94cf3b925908dc127a93f3525c1998e96abf37a14f69d6077a7e58bd7"
+    },
+    "sha256": "da1ec5db9b73531ea82a87723e4aedb631083331fe655d1972279b48a7bdb2fe",
+    "source": "https://cvpr.thecvf.com/Conferences/2027/AuthorGuidelines",
+    "url": "https://media.eventhosts.cc/Conferences/CVPR2027/author-kit-CVPR2027-v1-latex.zip",
+    "version": "2027"
+  },
+  "icml": {
+    "entry": "example_paper.tex",
+    "files": {
+      "algorithm.sty": "93fd0eb31c112eb405833db8f1d7f5d238c7e691b1c05680d7276e68f36d564a",
+      "algorithmic.sty": "48d18794a5d97c0479a588cc2eac0917992feb9da83acc4631b8f55757d80f9b",
+      "example_paper.bib": "df950103d38f9cfc81b1f40d84c9be2a3525d046d2991a6973a4446922c06bd1",
+      "example_paper.tex": "209713159d3590e8fc871a9d629916a8efc21b9bdf90f56482b6060653f065e0",
+      "fancyhdr.sty": "9130c52f91087abc6d223164ffa587e207e3257fcbcd069ef09ecb5391043f14",
+      "icml2027.bst": "0ec3d5eb9b02efb7e0b44a32f3775882f42a743d0bdc618f34e6936309b98764",
+      "icml2027.sty": "3a61b88dc041e0f1db75cd8ff0a8e5396979cfb88cbde684333eb1a0ae585e30",
+      "icml_numpapers.pdf": "d34e8da982296363627996e6e18850c11fbd616e6946061237051e7a8f7080bb"
+    },
+    "sha256": "52384a2a4f32e562755e44ced55a58f857f8706425f2f04904190f613531801e",
+    "source": "https://icml.cc/Conferences/2027/AuthorInstructions",
+    "url": "https://media.icml.cc/Conferences/ICML2027/styles/icml2027.zip",
+    "version": "2027"
+  },
+  "ijcai": {
+    "entry": "ijcai27.tex",
+    "files": {
+      "ijcai27.bib": "b47c5115eb344dbb5b11707b662817c444b9098a50b6b438578790788b2f9e5c",
+      "ijcai27.sty": "cdf7ca9a28c6b1ba60cde0f42019ccea3722838242b69471db572d21f879d3b2",
+      "ijcai27.tex": "e55c680ffad8213b91da9091a5238e8e0281cc019b7f7b29654776f14d85ab05",
+      "named.bst": "72c53a0febca9745a9a6febdc1e49327d2b6ac4f161e1d7a210dd47e5f5dda40"
+    },
+    "sha256": "1f829e86070353eb72220864632c4e6c5a6dd160c35380e68de14a242078b663",
+    "source": "https://ijcai.org/authors_kit/",
+    "url": "https://ijcai.org/sites/default/files/Guidelines/FormattingGuidelines-IJCAI-27.zip",
+    "version": "2027"
+  },
+  "neurips": {
+    "entry": "neurips_2026.tex",
+    "files": {
+      "checklist.tex": "780ba13c480f652dcc42e69ed61a752ce0ea270f15d332d4a45b059dabad84f6",
+      "neurips_2026.sty": "c3fc2894e83d2517ca18b66741d6c595986d97957dc08ec08bb2125a7ec4555a",
+      "neurips_2026.tex": "cf4cee7991665306d1daaa3985be4feec7f8889d6d072ffa12f99a8e1537d797"
+    },
+    "sha256": "82473931e3ef710fcd3f4a8cd4119b9de32e56825f90f9e5a6d55f2d01b817d9",
+    "source": "https://neurips.cc/Conferences/2026/CallForPapers",
+    "url": "https://media.neurips.cc/Conferences/NeurIPS2026/Formatting_Instructions_For_NeurIPS_2026.zip",
+    "version": "2026"
+  }
+}

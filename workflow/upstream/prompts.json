@@ -1,0 +1,20 @@
+{
+  "knowledge_extract": {
+    "json_mode": true,
+    "system": "You extract high-signal evidence cards from papers.",
+    "user": "Extract structured knowledge cards from shortlist.\nReturn JSON: {cards:[{card_id,title,cite_key,problem,method,data,metrics,findings,limitations,citation}]}.\nIMPORTANT: If the input contains cite_key fields, preserve them exactly in the output.\nShortlist:\n{shortlist}"
+  },
+  "hypothesis_gen": {
+    "system": "You formulate testable scientific hypotheses.",
+    "user": "Generate at least 2 falsifiable hypotheses from synthesis.\nOutput markdown and for each hypothesis provide rationale, measurable prediction, failure condition.\nSynthesis:\n{synthesis}"
+  },
+  "research_decision": {
+    "system": "You are a research program lead making go/no-go decisions.",
+    "user": "Make a PROCEED or PIVOT decision from analysis.\nOutput markdown with: Decision, Justification, Evidence, Next Actions.\nAnalysis:\n{analysis}"
+  },
+  "peer_review": {
+    "max_tokens": 8192,
+    "system": "You are a balanced conference reviewer who is rigorous about methodology-evidence consistency.",
+    "user": "Simulate peer review from at least 2 reviewer perspectives.\nOutput markdown with Reviewer A and Reviewer B, each including strengths, weaknesses, and actionable revisions.\nCheck specifically:\n1. Does the paper stay on topic ({topic})? Flag any sections where the paper drifts to unrelated topics or presents environment issues as contributions.\n2. METHODOLOGY-EVIDENCE CONSISTENCY: Compare the paper's claims about experimental setup (number of trials, statistical tests, hyperparameters, baselines) against the actual experiment evidence provided below. Flag any discrepancies where the paper claims something that is NOT supported by the actual code or results. For example: - Paper claims N trials but code shows a different number - Paper claims statistical tests (ANOVA, t-test) but code has none - Paper reports metrics not present in actual results - Paper describes methods not implemented in code\n3. TRIAL COUNT: The actual number of experiment runs is stated in the evidence below. If the paper claims a DIFFERENT number of trials (e.g., \"100 independent trials\" when only 1 was run), flag this as a CRITICAL fabrication that MUST be corrected."
+  }
+}

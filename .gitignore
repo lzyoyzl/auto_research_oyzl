@@ -1,0 +1,9 @@
+.venv/
+.tools/
+data/
+__pycache__/
+*.pyc
+*.tmp
+
+/studies/
+/runs/
