@@ -57,6 +57,9 @@ class FlowTest(unittest.TestCase):
                             "novelty_assessment": f"prior art check {i}", "introduction": f"question {i}",
                             "background": f"technical context {i}", "motivation": f"reason to test {i}",
                             "evidence_gap": f"untested premise {i}", "prediction": f"conditional effect {i}",
+                            "technical_neighbor": {"url": self.url + "P0.html", "section": "Methods",
+                                "excerpt": "Fixture method in document 0", "transfer_baseline": f"direct transfer {i}"},
+                            "technical_obstacle": f"technical obstacle {i}", "cost_boundary": f"cost and scope {i}",
                             "competing_explanation": f"matched control {i}",
                             "closest_difference": "fixture", "sources": ["P0"], "pilot": "paired",
                             "falsifier": "zero gain"} for i in range(3)]})
@@ -217,7 +220,7 @@ The paired fixture executed successfully.
         path = run / proposal_path(s)
         obj = read(path)
         for key in ("novelty_assessment", "introduction", "background", "motivation",
-                    "evidence_gap", "prediction", "competing_explanation"):
+                    "evidence_gap", "prediction", "competing_explanation", "technical_obstacle", "cost_boundary"):
             with self.subTest(key=key):
                 original = obj["ideas"][-1][key]
                 obj["ideas"][-1][key] = " "
@@ -226,17 +229,38 @@ The paired fixture executed successfully.
                     advance(run)
                 self.assertEqual(snapshot(run)["phase"], "ideas")
                 obj["ideas"][-1][key] = original
+        neighbor = obj["ideas"][-1]["technical_neighbor"]
+        for key in ("url", "section", "excerpt", "transfer_baseline"):
+            with self.subTest(neighbor_key=key):
+                value = neighbor.pop(key)
+                save(path, obj)
+                with self.assertRaisesRegex(ValueError, key):
+                    advance(run)
+                neighbor[key] = value
+        # A method found during ideation need not have been in the sealed reading list.
+        (run.parent / "late.html").write_text("<p>" + "New technical comparison in section 4. " * 20 + "</p>")
+        neighbor.update(url=self.url + "late.html", section="§4", excerpt="invented source quotation")
+        save(path, obj)
+        with self.assertRaisesRegex(ValueError, "Unmatched excerpt"):
+            advance(run)
+        self.assertEqual(snapshot(run)["phase"], "ideas")
+        neighbor["excerpt"] = "New technical comparison in section 4."
         save(path, obj)
         self.assertEqual(advance(run), "idea_review")
         s = snapshot(run)
         rendered = pending_text(run, s)
+        self.assertTrue(any(p.startswith("sources/N") and p.endswith("/text.txt") for p in s["sealed"]))
         self.assertEqual((run / "reviews" / (s["pending"]["id"] + ".md")).read_text(), rendered + "\n")
         for section, idea in zip(rendered.split("\n## ")[1:], obj["ideas"], strict=True):
             for key, label in (("novelty_assessment", "查新判断"), ("introduction", "Introduction"),
                                ("background", "Background"), ("motivation", "Motivation"),
                                ("evidence_gap", "已知证据与待验证前提"), ("prediction", "机制产生的可区分预测"),
+                               ("technical_obstacle", "技术难点"), ("cost_boundary", "代价与适用边界"),
                                ("competing_explanation", "竞争解释与对照")):
                 self.assertIn(f"**{label}**　{idea[key]}", section)
+            ref = idea["technical_neighbor"]
+            self.assertIn(ref["transfer_baseline"], section)
+            self.assertIn(f"[原文章节 · {ref['section']}]({ref['url']})", section)
         previous = s["pending"]["id"]
         self.reply("revise-brief", "test the alternative explanation")
         revised = self.run_to_pause()

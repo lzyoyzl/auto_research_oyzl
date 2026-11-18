@@ -102,11 +102,16 @@ def pending_text(run, s):
             for key, label in (("novelty_assessment", "查新判断"), ("closest_difference", "最近邻与差异"),
                                ("introduction", "Introduction"), ("background", "Background"),
                                ("motivation", "Motivation"), ("evidence_gap", "已知证据与待验证前提"),
-                               ("mechanism", "核心机制"), ("prediction", "机制产生的可区分预测"),
+                               ("technical_obstacle", "技术难点"), ("mechanism", "核心机制"),
+                               ("cost_boundary", "代价与适用边界"), ("prediction", "机制产生的可区分预测"),
                                ("competing_explanation", "竞争解释与对照"),
                                ("pilot", "预实验"), ("falsifier", "推翻条件")):
                 if key in item:
                     lines.append(f"**{label}**　{item[key]}\n")
+                if key == "closest_difference" and "technical_neighbor" in item:
+                    neighbor = item["technical_neighbor"]
+                    lines.append(f"**已有方法直接迁移的强对照**　{neighbor['transfer_baseline']} "
+                                 f"[原文章节 · {neighbor['section']}]({neighbor['url']})\n")
             sources = []
             for ident in item["sources"]:
                 url = json.loads((run / "sources" / ident / "source.json").read_text())["url"]

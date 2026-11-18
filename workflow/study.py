@@ -151,6 +151,19 @@ def new(direction, run=None, rounds=4, seconds=300):
     return run
 
 
+def verify_passage(run, s, entry, folder):
+    require(normal(entry["section"]).casefold() not in {"abstract", "摘要"},
+            "Read a methods, results, or limitations section in the original paper")
+    textfile, metafile = folder / "text.txt", folder / "source.json"
+    meta = read(metafile)
+    require(digest(textfile) == meta["text_sha256"], "Cached source changed")
+    excerpt = normal(entry["excerpt"])
+    require(len(excerpt) >= 12 and excerpt in normal(textfile.read_text(encoding="utf-8")),
+            f"Unmatched excerpt in {folder.name}")
+    remember(run, s, textfile, metafile)
+    return meta
+
+
 def literature(run, s):
     path = run / "literature.json"
     doc = read(path)
@@ -158,21 +171,13 @@ def literature(run, s):
     seen, contents, urls = set(), set(), set()
     for paper in items(doc.get("papers"), 3, "Full-text papers"):
         fields(paper, "id title section excerpt method data comparison finding limitation")
-        require(normal(paper["section"]).casefold() not in {"abstract", "摘要"},
-                "Read a methods, results, or limitations section in the original paper")
         ident = paper_id(paper["id"])
-        folder = run / "sources" / ident
-        textfile, metafile = folder / "text.txt", folder / "source.json"
-        meta = read(metafile)
+        meta = verify_passage(run, s, paper, run / "sources" / ident)
         require(ident not in seen and meta["text_sha256"] not in contents and meta["url"] not in urls,
                 "Duplicate reading record")
-        require(digest(textfile) == meta["text_sha256"], "Cached source changed")
-        excerpt = normal(paper["excerpt"])
-        require(len(excerpt) >= 12 and excerpt in normal(textfile.read_text()), f"Unmatched excerpt in {ident}")
         seen.add(ident)
         contents.add(meta["text_sha256"])
         urls.add(meta["url"])
-        remember(run, s, textfile, metafile)
     remember(run, s, path)
     return "ideas"
 
@@ -200,6 +205,10 @@ def discover(run, s):
 
 def shortlist(run, s):
     sources = {p["id"] for p in read(run / "literature.json")["papers"]}
+    known_texts = {}
+    for ident in sources:
+        folder = run / "sources" / ident
+        known_texts[read(folder / "source.json")["url"]] = folder
     path = run / proposal_path(s)
     obj = read(path)
     fields(obj, "reason venue venue_reason")
@@ -210,10 +219,20 @@ def shortlist(run, s):
     for idea in items(obj.get("ideas"), 3, "Ranked ideas"):
         fields(idea, "id title novelty_assessment closest_difference introduction background motivation mechanism pilot falsifier")
         fields(idea, "evidence_gap prediction competing_explanation")
+        fields(idea, "technical_obstacle cost_boundary")
         ident = paper_id(idea["id"])
         require(ident not in ids and normal(idea["mechanism"]) not in mechanisms, "Duplicate candidate")
         require(normal(idea["mechanism"]).casefold() not in rejected, "Previously rejected mechanism; propose a new idea")
         require(set(items(idea.get("sources"), 1, "Source IDs")) <= sources, "Unknown source ID")
+        neighbor = idea.get("technical_neighbor")
+        require(isinstance(neighbor, dict), f"{ident} needs a technical_neighbor")
+        fields(neighbor, "url section excerpt transfer_baseline")
+        url = neighbor["url"]
+        if url not in known_texts:
+            # A competing method can surface after the initial reading list is sealed.
+            source_id = "N" + hashlib.sha256(url.encode()).hexdigest()[:16]
+            known_texts[url] = capture(path.parent, source_id, url)
+        verify_passage(run, s, neighbor, known_texts[url])
         ids.append(ident)
         mechanisms.add(normal(idea["mechanism"]))
     remember(run, s, path)
