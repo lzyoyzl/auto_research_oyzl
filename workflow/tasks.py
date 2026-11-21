@@ -48,6 +48,8 @@ def task(run, state):
 "competing_explanation":"指出能产生相同表象的竞争解释及只改变关键因素的公平对照",
 "mechanism":"从输入到输出写出可执行的关键操作或推导，说明固定量、可改变的变量，以及主张成立的条件",
 "cost_boundary":"说明代价来自何处、哪些成本需实测，以及何时近似、结论或部署条件会失效",
+"design_argument":"从可改变的变量到实际使用目标的关键关系、推导依据和适用假设",
+"design_check":"用参考解、独立观测、反例或正负对照校验关键操作，并区分实现失败与主张失效",
 "pilot":"先查瓶颈覆盖率或可改善空间，再给能区分新机制和直接迁移方案的最低成本检验",
 "falsifier":"什么结果会推翻设想"}]}。按优先顺序排列；交给用户选定或整批退回。
 先写出把已有方法直接移植后可以交付的最强方案，再提出仍需要研究的操作、证明或识别设计。
@@ -117,8 +119,10 @@ claims.json 中的主张须以相同措辞出现在 PDF 正文中，控制器会
                  + template["system"] + "\n" + template["user"])
     if phase in {"ideas", "write", "review"}:
         guide += "\n" + (HERE / "idea-writing.md").read_text(encoding="utf-8")
+    if phase in {"ideas", "pilot", "plan", "decide", "write", "review"}:
+        guide += "\n" + (HERE / "method-design.md").read_text(encoding="utf-8")
     contract = contracts[phase].replace("source RUN ID", f"source {shlex.quote(str(run))} ID")
-    details = {k: state.get(k) for k in ("idea", "selected_proposal", "idea_feedback", "pilot_ref", "pilot_gpu",
+    details = {k: state.get(k) for k in ("idea", "selected_proposal", "selected_design", "idea_feedback", "pilot_ref", "pilot_gpu",
                                         "timeout", "budget_reason", "needed")}
     if state.get("grant"):
         details["approved"] = state["grant"]["limits"]
@@ -130,6 +134,8 @@ claims.json 中的主张须以相同措辞出现在 PDF 正文中，控制器会
     elif phase == "budget":
         details["output"] = budget_path(state)
     contract += "\n本次约束：" + json.dumps(details, ensure_ascii=False)
+    if state.get("selected_design") and phase not in {"discover", "read", "ideas"}:
+        contract += "\n读取 selected_design 的冻结正文，以用户实际选定的这版方法为准。"
     venue = state.get("venue")
     venue_note = (f"\n目标会议 {venue}，官方说明 {VENUES[venue]['source']}，模板入口 {VENUES[venue]['entry']}"
                   if venue else "")

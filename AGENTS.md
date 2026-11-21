@@ -15,4 +15,6 @@
 
 构思、写稿和审稿遵循[研究 idea 写作指南](workflow/idea-writing.md)。构思时沿具体机制补查最可能削弱主张的原文，在审核单中展示旧方法直接迁移的强对照、必须解决的技术难点、可执行的做法和代价边界。首个诊断优先检验最不确定的前提，论文中的主张由实测证据确定。
 
+用[论文 Design 指南](workflow/method-design.md)连接方法、目标与实验。若用户明确选定讨论中修订的具体设计，通过 `choose --design` 记录其正文，后续研究以该冻结版本为准。
+
 [AI/ML 研究约定](workflow/research-standard.md) · [框架来源](workflow/frameworks.md) · [官方会议模板](workflow/templates/README.md)

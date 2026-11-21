@@ -103,6 +103,7 @@ def pending_text(run, s):
                                ("introduction", "Introduction"), ("background", "Background"),
                                ("motivation", "Motivation"), ("evidence_gap", "已知证据与待验证前提"),
                                ("technical_obstacle", "技术难点"), ("mechanism", "核心机制"),
+                               ("design_argument", "从设计到任务目标"), ("design_check", "设计核验"),
                                ("cost_boundary", "代价与适用边界"), ("prediction", "机制产生的可区分预测"),
                                ("competing_explanation", "竞争解释与对照"),
                                ("pilot", "预实验"), ("falsifier", "推翻条件")):

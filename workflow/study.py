@@ -219,7 +219,7 @@ def shortlist(run, s):
     for idea in items(obj.get("ideas"), 3, "Ranked ideas"):
         fields(idea, "id title novelty_assessment closest_difference introduction background motivation mechanism pilot falsifier")
         fields(idea, "evidence_gap prediction competing_explanation")
-        fields(idea, "technical_obstacle cost_boundary")
+        fields(idea, "technical_obstacle cost_boundary design_argument design_check")
         ident = paper_id(idea["id"])
         require(ident not in ids and normal(idea["mechanism"]) not in mechanisms, "Duplicate candidate")
         require(normal(idea["mechanism"]).casefold() not in rejected, "Previously rejected mechanism; propose a new idea")
@@ -239,7 +239,24 @@ def shortlist(run, s):
     return ask_idea(s, obj, ids[0], obj["reason"])
 
 
-def record_reply(run, request, action, value=None, pilot_gpu=None):
+def freeze_design(run, state, design):
+    source = (run / design).resolve()
+    require(source.is_relative_to(run.resolve()) and source.suffix.lower() == ".md" and source.is_file(),
+            "Choose a reviewed Markdown design inside this study")
+    content = source.read_bytes()
+    require(content.decode("utf-8").strip(), "Selected design is empty")
+    checksum = hashlib.sha256(content).hexdigest()
+    path = run / "reviews" / f"design-{checksum}.md"
+    path.parent.mkdir(exist_ok=True)
+    if not path.exists() or digest(path) != checksum:
+        with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as tmp:
+            tmp.write(content)
+        os.replace(tmp.name, path)
+    remember(run, state, path)
+    return str(path.relative_to(run))
+
+
+def record_reply(run, request, action, value=None, pilot_gpu=None, design=None):
     """Only the human-facing CLI/chat handler invokes this function. Workers never do."""
     with lock(run, ".state.lock"):
         s = current(run)
@@ -252,10 +269,13 @@ def record_reply(run, request, action, value=None, pilot_gpu=None):
         if action == "choose":
             obj = read(run / artifact)
             require(value in [i["id"] for i in obj["ideas"]], "Choose an ID from this proposal")
-            if value == s["idea"] and s.get("selected_proposal") == artifact and s.get("pilot_ref"):
+            selected_design = freeze_design(run, s, design) if design is not None else None
+            if (value == s["idea"] and s.get("selected_proposal") == artifact
+                    and s.get("selected_design") == selected_design and s.get("pilot_ref")):
                 following = "plan"
             else:
-                s.update(idea=value, selected_proposal=artifact, selection=s["selection"] + 1, pilot_attempt=1,
+                s.update(idea=value, selected_proposal=artifact, selected_design=selected_design,
+                         selection=s["selection"] + 1, pilot_attempt=1,
                          pilot_gpu=pilot_gpu, pilot_ref=None, budget_selection=None)
                 s.pop("needed", None)
                 following = "pilot"
@@ -283,6 +303,8 @@ def record_reply(run, request, action, value=None, pilot_gpu=None):
         s["receipts"].append({"id": request, "action": action, "value": value, "pilot_gpu": pilot_gpu,
                               "artifact": artifact, "sha256": digest(run / artifact),
                               "time": datetime.now(timezone.utc).isoformat()})
+        if action == "choose" and s.get("selected_design"):
+            s["receipts"][-1].update(design=s["selected_design"], design_sha256=s["sealed"][s["selected_design"]])
         s.pop("pending")
         s["history"].append({"from": phase, "to": following, "round": s["round"], "reply": action})
         s["phase"] = following
@@ -613,6 +635,7 @@ def cli():
         p.add_argument("request", help="ID shown on the pending review")
         if name == "choose":
             p.add_argument("idea")
+            p.add_argument("--design", help="Reviewed Markdown version, relative to the study directory")
             p.add_argument("--pilot-gpu", help="One already authorized local GPU index or UUID")
         if name in {"repropose", "revise-brief", "revise-budget"}:
             p.add_argument("--reason")
@@ -643,7 +666,7 @@ def cli():
             print(pending_text(run, s))
     elif args.cmd in {"choose", "repropose", "revise-brief", "approve-budget", "revise-budget"}:
         print(record_reply(run, args.request, args.cmd, getattr(args, "idea", None) or getattr(args, "reason", None),
-                           getattr(args, "pilot_gpu", None)))
+                           getattr(args, "pilot_gpu", None), getattr(args, "design", None)))
 
 
 if __name__ == "__main__":

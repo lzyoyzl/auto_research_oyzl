@@ -42,6 +42,8 @@ PowerShell 下在同样的命令前加 `wsl -d Ubuntu -- `。想限定算力时�
 
 ### 在命令行回复审核
 
+每个候选按[论文 Design 指南](workflow/method-design.md)给出从技术干预到实际目标的论证和核验方式。若讨论后用户明确选定一份修订稿，可用 `choose DIR 审核编号 候选ID --design 相对研究目录的稿件.md` 绑定该版。控制器保存正文快照与哈希，预实验、正式方案和写稿均可读取它。
+
 `run` 和 `resume` 遇到待审会展示申请并退出。使用 `next DIR` 可重看。用屏幕上的实际审核编号和候选 ID 替换以下示例；登记回复后运行 `resume DIR`。
 
 ```bash

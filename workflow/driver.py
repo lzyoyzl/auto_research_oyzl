@@ -39,6 +39,8 @@ def context(run, state):
     # including in WSL sessions that use the Windows Codex account.
     paths = [run / "search.json", run / "downloads.json", run / "literature.json", run / "ideas.json"]
     paths += sorted(run.glob("proposals/*/ideas.json"))
+    if state.get("selected_design"):
+        paths.append(run / state["selected_design"])
     paths += sorted(run.glob("pilots/*/*/result.json")) + sorted(run.glob("budgets/*/request.json"))
     paths += sorted(run.glob("rounds/*/*.json"))
     if state["phase"] in {"plan", "decide"}:

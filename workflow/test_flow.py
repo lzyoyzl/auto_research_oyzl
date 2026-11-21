@@ -12,6 +12,7 @@ from unittest.mock import patch
 
 from approvals import budget_path, estimate, excess, pending_text, process_env, proposal_path, totals
 from driver import artifacts, drive
+from tasks import task
 from study import advance, check, new, read, record_reply, save, snapshot
 
 
@@ -60,6 +61,7 @@ class FlowTest(unittest.TestCase):
                             "technical_neighbor": {"url": self.url + "P0.html", "section": "Methods",
                                 "excerpt": "Fixture method in document 0", "transfer_baseline": f"direct transfer {i}"},
                             "technical_obstacle": f"technical obstacle {i}", "cost_boundary": f"cost and scope {i}",
+                            "design_argument": f"derivation {i}", "design_check": f"reference check {i}",
                             "competing_explanation": f"matched control {i}",
                             "closest_difference": "fixture", "sources": ["P0"], "pilot": "paired",
                             "falsifier": "zero gain"} for i in range(3)]})
@@ -220,7 +222,8 @@ The paired fixture executed successfully.
         path = run / proposal_path(s)
         obj = read(path)
         for key in ("novelty_assessment", "introduction", "background", "motivation",
-                    "evidence_gap", "prediction", "competing_explanation", "technical_obstacle", "cost_boundary"):
+                    "evidence_gap", "prediction", "competing_explanation", "technical_obstacle", "cost_boundary",
+                    "design_argument", "design_check"):
             with self.subTest(key=key):
                 original = obj["ideas"][-1][key]
                 obj["ideas"][-1][key] = " "
@@ -256,6 +259,7 @@ The paired fixture executed successfully.
                                ("background", "Background"), ("motivation", "Motivation"),
                                ("evidence_gap", "已知证据与待验证前提"), ("prediction", "机制产生的可区分预测"),
                                ("technical_obstacle", "技术难点"), ("cost_boundary", "代价与适用边界"),
+                               ("design_argument", "从设计到任务目标"), ("design_check", "设计核验"),
                                ("competing_explanation", "竞争解释与对照")):
                 self.assertIn(f"**{label}**　{idea[key]}", section)
             ref = idea["technical_neighbor"]
@@ -269,6 +273,24 @@ The paired fixture executed successfully.
         self.assertNotEqual(revised["pending"]["id"], previous)
         self.assertTrue((run / proposal_path(revised)).is_file())
         self.assertEqual((run / "reviews" / (previous + ".md")).read_text(), rendered + "\n")
+
+    def test_choosing_discussed_design_freezes_exact_version(self):
+        run = self.run_dir
+        gate = self.run_to_pause()["pending"]["id"]
+        with self.assertRaisesRegex(ValueError, "inside this study"):
+            record_reply(run, gate, "choose", "I0", design="../outside.md")
+        original = run / "revision.md"
+        original.write_text("Reviewed method revision")
+        self.assertEqual(record_reply(run, gate, "choose", "I0", design="revision.md"), "pilot")
+        original.write_text("Subsequent discussion")
+        state = snapshot(run)
+        design = state["selected_design"]
+        self.assertEqual((run / design).read_text(), "Reviewed method revision")
+        self.assertEqual(state["receipts"][-1]["design_sha256"], state["sealed"][design])
+        self.assertIn(design, task(run, state))
+        (run / design).write_text("Modified snapshot")
+        with self.assertRaisesRegex(ValueError, "Frozen evidence"):
+            snapshot(run)
 
     def test_financial_request_and_overrun_before_launch(self):
         run = self.run_dir
